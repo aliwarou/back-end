@@ -18,5 +18,5 @@ export class SignUpDto {
   password: string;
 
   @IsEnum(RoleEnum)
-  role?: RoleEnum = RoleEnum.Regular;
+  role?: RoleEnum = RoleEnum.Client;
 }

@@ -3,12 +3,11 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { RolesModule } from 'src/roles/roles.module';
 import { HashingService } from 'src/users/hashing/hashing.service';
 import { BcryptService } from 'src/users/hashing/bcrypt.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), RolesModule],
+  imports: [TypeOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [
     UsersService,

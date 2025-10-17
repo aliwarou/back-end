@@ -1,4 +1,4 @@
-import { Role } from 'src/roles/entities/role.entity';
+import { RoleEnum } from 'src/iam/authentification/enums/role.enum';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -18,6 +18,6 @@ export class User {
   @Column({ nullable: true })
   googleId: string;
 
-  @ManyToOne(() => Role, (role) => role.user, { eager: true })
-  role: Role;
+  @Column({default: RoleEnum.Client})
+  role: RoleEnum;
 }

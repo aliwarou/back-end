@@ -7,7 +7,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoleService } from 'src/roles/roles.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoleEnum } from 'src/iam/authentification/enums/role.enum';
 import { HashingService } from 'src/users/hashing/hashing.service';
@@ -18,14 +17,12 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly roleService: RoleService,
     private readonly haschingService: HashingService,
   ) {}
   async create(createUserDto: CreateUserDto): Promise<User> {
     console.log('user DTO', createUserDto);
 
     try {
-      const role = await this.getRole(createUserDto.role);
 
       let hashedPassword = null;
       if (createUserDto.password)
@@ -36,7 +33,6 @@ export class UsersService {
       const user = this.userRepository.create({
         ...createUserDto,
         password: hashedPassword,
-        role,
       });
 
       return await this.userRepository.save(user);
@@ -47,16 +43,7 @@ export class UsersService {
     }
   }
 
-  private async getRole(roleName: RoleEnum) {
-    const role = await this.roleService.findOneByName(roleName);
-    console.log('role', role);
-
-    if (!role) {
-      throw new NotFoundException(`Role ${role} not found`);
-    }
-    return role;
-  }
-
+  
   findAll() {
     return this.userRepository.find();
   }
@@ -76,11 +63,11 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
-    const role = await this.roleService.findOneByName(updateUserDto.role);
-    if (!role) throw new NotFoundException('role not found');
-    user.role = role;
-    return await this.userRepository.save(user);
+
+    const user = await this.userRepository.findOneBy({id})
+    const newUser = {...user,updateUserDto}
+   
+    return  this.userRepository.save(newUser);
   }
 
   async remove(id: number) {

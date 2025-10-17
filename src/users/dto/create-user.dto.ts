@@ -27,5 +27,5 @@ export class CreateUserDto {
   googleId?: string = null;
 
   @IsEnum(RoleEnum)
-  role?: RoleEnum = RoleEnum.Regular;
+  role?: RoleEnum = RoleEnum.Client;
 }

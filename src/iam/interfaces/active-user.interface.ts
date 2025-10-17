@@ -1,7 +1,7 @@
-import { Role } from 'src/roles/entities/role.entity';
+import { RoleEnum } from '../authentification/enums/role.enum';
 
 export interface ActiveUserData {
   sub: number;
   email: string;
-  role: Role;
+  role: RoleEnum;
 }

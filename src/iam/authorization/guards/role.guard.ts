@@ -26,6 +26,6 @@ export class RoleGuard implements CanActivate {
     console.log(roles);
 
     if (roles.length == 0) return true;
-    return roles.some((role) => user.role.name == role);
+    return roles.some((role) => user.role == role);
   }
 }

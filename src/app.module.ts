@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CoffeesModule } from './coffees/coffees.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { IamModule } from './iam/iam.module';
 import { ConfigModule } from '@nestjs/config';
-import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
-    CoffeesModule,
     UsersModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
@@ -27,7 +24,6 @@ import { RolesModule } from './roles/roles.module';
       }),
     }),
     IamModule,
-    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

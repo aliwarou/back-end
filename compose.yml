@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres_authApp
+    restart: always
+    environment:
+      POSTGRES_USER: aliuser
+      POSTGRES_PASSWORD: alipassword
+      POSTGRES_DB: authDB
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+
+  pgadmin:
+    image: elestio/pgadmin
+    container_name: pgadmin_authApp
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: waroumy@gmail.com # Email de connexion à pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: admin # Mot de passe pour pgAdmin
+    ports:
+      - '8080:80' # Accès à pgAdmin via http://localhost:8080
+
+volumes:
+  postgres_data:
+    driver: local

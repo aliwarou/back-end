@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { IamModule } from './iam/iam.module';
 import { ConfigModule } from '@nestjs/config';
+import { LawerprofilesModule } from './lawerprofiles/lawerprofiles.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ConfigModule } from '@nestjs/config';
       }),
     }),
     IamModule,
+    LawerprofilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,11 @@
 import { IsEmail, IsEnum, IsString, IsStrongPassword } from 'class-validator';
 import { RoleEnum } from '../enums/role.enum';
 
+export enum SignUpEnum {
+  Client = RoleEnum.Client,
+  Juriste = RoleEnum.Juriste,
+}
+
 export class SignUpDto {
   @IsEmail()
   email: string;
@@ -17,6 +22,6 @@ export class SignUpDto {
   })
   password: string;
 
-  @IsEnum(RoleEnum)
+  @IsEnum(SignUpEnum)
   role?: RoleEnum = RoleEnum.Client;
 }

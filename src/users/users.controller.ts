@@ -22,7 +22,7 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-  @Auth(AuthType.Bearer)
+  // @Auth(AuthType.Bearer)
   @Get()
   findAll() {
     return this.usersService.findAll();

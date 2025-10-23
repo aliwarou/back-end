@@ -6,7 +6,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { IamModule } from './iam/iam.module';
 import { ConfigModule } from '@nestjs/config';
-import { LawerprofilesModule } from './lawerprofiles/lawerprofiles.module';
+import { LawyerProfilesModule } from './lawyer-profiles/lawyer-profiles.module';
+import { AvailabilitiesModule } from './availabilities/availabilities.module';
+import { AppointmentsModule } from './appointments/appointments.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { ConversationsModule } from './conversations/conversations.module';
+import { MessagesModule } from './messages/messages.module';
+import { DocumentsModule } from './documents/documents.module';
+import { ConsultationsModule } from './consultations/consultations.module';
+import { AdminModule } from './admin/admin.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -25,7 +34,16 @@ import { LawerprofilesModule } from './lawerprofiles/lawerprofiles.module';
       }),
     }),
     IamModule,
-    LawerprofilesModule,
+    LawyerProfilesModule,
+    AvailabilitiesModule,
+    AppointmentsModule,
+    ReviewsModule,
+    ConversationsModule,
+    MessagesModule,
+    DocumentsModule,
+    ConsultationsModule,
+    AdminModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

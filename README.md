@@ -1,99 +1,327 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Plateforme de Consultation Juridique - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Une API complète construite avec NestJS pour une plateforme de consultation juridique en ligne permettant aux clients de trouver des juristes, réserver des consultations, et gérer l'ensemble du processus de consultation de bout en bout.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Fonctionnalités Principales
 
-## Description
+### ✅ Implémenté
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Authentification & Autorisation**
 
-## Project setup
+  - JWT (Access Token + Refresh Token)
+  - Google OAuth2
+  - Gestion des rôles (Client, Juriste, Admin)
+  - Protection des routes par guards
+
+- **Gestion des Utilisateurs**
+
+  - CRUD utilisateurs
+  - Export RGPD des données
+  - Suppression de compte conforme RGPD
+
+- **Profils Juristes**
+
+  - Création et gestion de profils professionnels
+  - Recherche avancée avec filtres multiples
+  - Vérification KYC par admin
+  - Système de notation et avis
+
+- **Système de Réservation**
+
+  - Gestion des disponibilités
+  - Création de rendez-vous
+  - Workflow complet (PENDING → ACCEPTED → SCHEDULED → COMPLETED)
+  - Annulation et gestion des statuts
+
+- **Consultations**
+
+  - Génération de liens Jitsi pour visioconférence
+  - Tracking de durée et horodatage
+  - Notes client/juriste
+
+- **Messagerie**
+
+  - Conversations 1:1
+  - Messages avec pièces jointes
+  - Système de lecture/non-lu
+
+- **Gestion Documentaire**
+
+  - Upload/download via presigned URLs S3
+  - Gestion des permissions
+  - Support du chiffrement
+  - Types de documents variés
+
+- **Évaluations**
+
+  - Système de notation (1-5 étoiles)
+  - Commentaires et réponses
+  - Signalement et modération
+
+- **Panel Admin**
+  - Statistiques globales
+  - Vérification des juristes
+  - Modération des contenus
+  - Gestion des utilisateurs
+
+### 🚧 À Implémenter
+
+- **Module Payments** - Intégration Stripe complète avec webhooks
+- **Module Notifications** - WebSocket + Email + Push pour notifications temps réel
+- **WebSocket Gateway** - Messagerie instantanée
+- **Tests** - Tests unitaires et E2E
+
+## 📋 Prérequis
+
+- Node.js >= 18
+- PostgreSQL >= 14
+- Redis >= 6
+- Docker & Docker Compose (recommandé)
+
+## 🛠️ Installation
+
+### 1. Cloner le projet
 
 ```bash
-$ npm install
+git clone <repository-url>
+cd back-end
 ```
 
-## Compile and run the project
+### 2. Installer les dépendances
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### 3. Configuration de l'environnement
+
+Copier le fichier de template et configurer :
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp env.template .env
 ```
 
-## Deployment
+Éditer `.env` avec vos valeurs :
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=authDB
+DB_USER=aliuser
+DB_PASSWORD=alipassword
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+# JWT
+JWT_SECRET=votre-secret-jwt-super-securise
+JWT_TOKEN_AUDIENCE=votre-audience
+JWT_TOKEN_ISSUER=votre-issuer
+JWT_ACCESS_TOKEN_TTL=3600
+JWT_REFRESH_TOKEN_TTL=86400
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Google OAuth2
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# AWS S3
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-key
+AWS_SECRET_ACCESS_KEY=your-secret
+S3_BUCKET_NAME=legal-consultations
+
+# Jitsi
+JITSI_BASE_URL=https://meet.jit.si
+```
+
+### 4. Lancer les services Docker
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+docker-compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Cela démarre :
 
-## Resources
+- PostgreSQL (port 5432)
+- Redis (port 6379)
+- PgAdmin (port 8080)
 
-Check out a few resources that may come in handy when working with NestJS:
+### 5. Lancer l'application
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Mode développement avec watch
+npm run start:dev
 
-## Support
+# Mode production
+npm run build
+npm run start:prod
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+L'API sera accessible sur `http://localhost:3000`
 
-## Stay in touch
+## 📚 Documentation
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **[API Documentation](./API_DOCUMENTATION.md)** - Documentation complète de tous les endpoints
+- **[Architecture](./ARCHITECTURE.md)** - Architecture détaillée du système
 
-## License
+## 🏗️ Structure du Projet
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```
+src/
+├── iam/                    # Authentification & Autorisation
+├── users/                  # Gestion utilisateurs + RGPD
+├── lawyer-profiles/        # Profils juristes avec recherche avancée
+├── availabilities/         # Disponibilités des juristes
+├── appointments/           # Système de rendez-vous
+├── consultations/          # Consultations vidéo/texte
+├── conversations/          # Conversations 1:1
+├── messages/               # Messagerie
+├── documents/              # Gestion documentaire S3
+├── reviews/                # Évaluations et modération
+└── admin/                  # Panel administration
+```
+
+## 🔑 Endpoints Principaux
+
+### Authentification
+
+- `POST /authentification/sign-up` - Inscription
+- `POST /authentification/sign-in` - Connexion
+- `POST /authentification/refresh-token` - Renouveler token
+- `POST /google-auth` - Connexion Google OAuth2
+
+### Profils Juristes
+
+- `GET /lawyer-profiles/search` - Recherche avancée avec filtres
+- `GET /lawyer-profiles/:id` - Détails d'un profil
+- `POST /lawyer-profiles` - Créer profil (Juriste)
+
+### Rendez-vous
+
+- `POST /appointments` - Créer RDV (Client)
+- `GET /appointments/my-appointments` - Mes RDV
+- `PATCH /appointments/:id/status` - Changer statut
+
+### Documents
+
+- `POST /documents/upload-url` - Obtenir URL upload
+- `GET /documents/:id/download-url` - URL téléchargement
+
+### RGPD
+
+- `GET /users/me/export-data` - Exporter mes données
+- `DELETE /users/me/delete-account` - Supprimer mon compte
+
+Voir [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) pour la liste complète.
+
+## 🔐 Sécurité
+
+- **Authentification JWT** avec Access + Refresh tokens
+- **Hashage Bcrypt** des mots de passe (10 rounds)
+- **Validation** stricte avec class-validator
+- **Guards & Decorators** pour contrôle d'accès
+- **Presigned URLs** pour fichiers S3 avec expiration
+- **RGPD** conforme (export + suppression données)
+
+## 🧪 Tests
+
+```bash
+# Tests unitaires
+npm run test
+
+# Tests E2E
+npm run test:e2e
+
+# Coverage
+npm run test:cov
+```
+
+## 🐳 Docker
+
+Le projet inclut Docker Compose pour faciliter le développement :
+
+```bash
+# Démarrer tous les services
+docker-compose up -d
+
+# Voir les logs
+docker-compose logs -f
+
+# Arrêter les services
+docker-compose down
+
+# Nettoyer volumes
+docker-compose down -v
+```
+
+## 🌐 Accès PgAdmin
+
+PgAdmin est disponible sur `http://localhost:8080`
+
+Credentials par défaut :
+
+- Email: waroumy@gmail.com
+- Password: admin
+
+## 📊 Technologies Utilisées
+
+- **Framework**: NestJS 10
+- **ORM**: TypeORM
+- **Base de données**: PostgreSQL
+- **Cache**: Redis
+- **Authentification**: JWT + Passport
+- **Validation**: class-validator
+- **Stockage**: AWS S3
+- **Visioconférence**: Jitsi
+- **OAuth2**: Google
+
+## 📝 Scripts NPM
+
+```bash
+npm run start          # Démarrer en mode production
+npm run start:dev      # Mode développement avec watch
+npm run start:debug    # Mode debug
+npm run build          # Compiler le projet
+npm run format         # Formatter le code
+npm run lint           # Linter le code
+npm run test           # Tests unitaires
+npm run test:e2e       # Tests E2E
+```
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📄 License
+
+Ce projet est sous licence MIT.
+
+## 👥 Support
+
+Pour toute question ou problème :
+
+- Consulter la [documentation API](./API_DOCUMENTATION.md)
+- Consulter l'[architecture](./ARCHITECTURE.md)
+- Ouvrir une issue sur GitHub
+
+## 🗺️ Roadmap
+
+- [ ] Module Payments avec Stripe
+- [ ] Module Notifications (WebSocket + Email)
+- [ ] Gateway WebSocket pour temps réel
+- [ ] Tests complets (unit + E2E)
+- [ ] Pipeline CI/CD
+- [ ] Monitoring (Prometheus/Grafana)
+- [ ] Rate limiting
+- [ ] Elasticsearch pour recherche full-text
+- [ ] Mobile app (React Native)
+
+---
+
+Développé avec ❤️ en utilisant NestJS

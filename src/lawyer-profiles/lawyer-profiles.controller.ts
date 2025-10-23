@@ -6,16 +6,18 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
-import { LawyerProfileService } from './lawerprofiles.service';
-import { CreateLawyerProfileDto } from './dto/create-lawerprofile.dto';
+import { LawyerProfileService } from './lawyer-profiles.service';
+import { CreateLawyerProfileDto } from './dto/create-lawyer-profile.dto';
+import { SearchLawyerDto } from './dto/search-lawyer.dto';
 import { Auth } from 'src/iam/authentification/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentification/enums/auth-type.enum';
 import { Role } from 'src/iam/authorization/decorators/role.decorator';
 import { RoleEnum } from 'src/iam/authentification/enums/role.enum';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user.interface';
-import { UpdateLawerprofileDto } from './dto/update-lawerprofile.dto';
+import { UpdateLawyerProfileDto } from './dto/update-lawyer-profile.dto';
 
 @Controller('lawyer-profiles')
 export class LawyerProfileController {
@@ -45,7 +47,7 @@ export class LawyerProfileController {
   @Role(RoleEnum.Juriste)
   @Patch()
   update(
-    @Body() updateDto: UpdateLawerprofileDto,
+    @Body() updateDto: UpdateLawyerProfileDto,
     @ActiveUser() activeUser: ActiveUserData,
   ) {
     return this.lawyerProfileService.update(updateDto, activeUser);
@@ -59,6 +61,16 @@ export class LawyerProfileController {
   @Get()
   findAll() {
     return this.lawyerProfileService.findAll();
+  }
+
+  /**
+   * Recherche avancée de juristes avec filtres et pagination.
+   * - Route publique.
+   */
+  @Auth(AuthType.None)
+  @Get('search')
+  search(@Query() searchDto: SearchLawyerDto) {
+    return this.lawyerProfileService.search(searchDto);
   }
 
   /**

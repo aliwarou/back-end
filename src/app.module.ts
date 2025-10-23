@@ -16,6 +16,7 @@ import { DocumentsModule } from './documents/documents.module';
 import { ConsultationsModule } from './consultations/consultations.module';
 import { AdminModule } from './admin/admin.module';
 import { PaymentsModule } from './payments/payments.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { PaymentsModule } from './payments/payments.module';
     ConsultationsModule,
     AdminModule,
     PaymentsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

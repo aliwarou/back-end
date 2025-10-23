@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { LawyerProfileService } from './lawyer-profiles.service';
 import { CreateLawyerProfileDto } from './dto/create-lawyer-profile.dto';
 import { SearchLawyerDto } from './dto/search-lawyer.dto';
@@ -19,6 +20,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user.interface';
 import { UpdateLawyerProfileDto } from './dto/update-lawyer-profile.dto';
 
+@ApiTags('Lawyer Profiles')
 @Controller('lawyer-profiles')
 export class LawyerProfileController {
   constructor(private readonly lawyerProfileService: LawyerProfileService) {}
@@ -28,6 +30,8 @@ export class LawyerProfileController {
    * - Requiert une authentification de type Bearer (JWT).
    * - Requiert que l'utilisateur ait le rôle 'Juriste'.
    */
+  @ApiOperation({ summary: 'Créer un profil de juriste' })
+  @ApiBearerAuth('JWT-auth')
   @Auth(AuthType.Bearer)
   @Role(RoleEnum.Juriste)
   @Post()
@@ -67,6 +71,7 @@ export class LawyerProfileController {
    * Recherche avancée de juristes avec filtres et pagination.
    * - Route publique.
    */
+  @ApiOperation({ summary: 'Rechercher des juristes avec filtres' })
   @Auth(AuthType.None)
   @Get('search')
   search(@Query() searchDto: SearchLawyerDto) {

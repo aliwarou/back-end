@@ -170,7 +170,7 @@ export class AppointmentsService {
       lawyerProfile = await this.lawyerProfileService.findByUserId(
         activeUser.sub,
       );
-    } catch (error) {
+    } catch (_error) {
       // L'utilisateur n'est pas un juriste, c'est OK
     }
 

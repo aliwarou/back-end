@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test WebSocket Chat</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+
+      .status.connected {
+        background: #10b981;
+      }
+
+      .status.disconnected {
+        background: #ef4444;
+      }
+
+      .auth-section,
+      .chat-section {
+        padding: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .messages {
+        height: 400px;
+        overflow-y: auto;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f9fafb;
+      }
+
+      .message {
+        margin-bottom: 12px;
+        padding: 10px;
+        border-radius: 8px;
+        background: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .message.system {
+        background: #dbeafe;
+        border-left: 4px solid #3b82f6;
+      }
+
+      .message.user {
+        background: #dcfce7;
+        border-left: 4px solid #10b981;
+      }
+
+      .message-sender {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 4px;
+      }
+
+      .message-content {
+        color: #6b7280;
+      }
+
+      .message-time {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 4px;
+      }
+
+      .typing-indicator {
+        font-style: italic;
+        color: #6b7280;
+        padding: 10px;
+      }
+
+      .send-section {
+        display: flex;
+        gap: 10px;
+      }
+
+      .send-section input {
+        flex: 1;
+      }
+
+      .send-section button {
+        flex-shrink: 0;
+      }
+
+      .helper-text {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 5px;
+      }
+
+      .info-box {
+        background: #fef3c7;
+        border: 2px solid #fbbf24;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+
+      .info-box strong {
+        color: #92400e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>💬 Test WebSocket Chat</h1>
+        <span class="status disconnected" id="status">Déconnecté</span>
+      </div>
+
+      <div class="auth-section">
+        <div class="info-box">
+          <strong>📝 Comptes de test:</strong><br />
+          • client1@example.com / Pass123!<br />
+          • juriste1@example.com / Pass123!
+        </div>
+
+        <div class="form-group">
+          <label>📧 Email</label>
+          <input
+            id="email"
+            type="email"
+            value="client1@example.com"
+            placeholder="client1@example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>🔒 Mot de passe</label>
+          <input
+            id="password"
+            type="password"
+            value="Pass123!"
+            placeholder="Pass123!"
+          />
+        </div>
+
+        <button onclick="login()">🚀 Se connecter</button>
+      </div>
+
+      <div class="chat-section" style="display: none" id="chatSection">
+        <div class="form-group">
+          <label>💭 ID de la conversation</label>
+          <input id="conversationId" type="number" placeholder="1" value="1" />
+          <div class="helper-text">
+            Entrez l'ID d'une conversation existante
+          </div>
+        </div>
+
+        <button onclick="joinConversation()">
+          📥 Rejoindre la conversation
+        </button>
+
+        <hr
+          style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb"
+        />
+
+        <div class="messages" id="messages"></div>
+        <div
+          class="typing-indicator"
+          id="typingIndicator"
+          style="display: none"
+        >
+          ✍️ En train d'écrire...
+        </div>
+
+        <div class="send-section">
+          <input
+            id="message"
+            placeholder="Écrivez votre message..."
+            onkeypress="if(event.key==='Enter') sendMessage()"
+            onfocus="handleTyping(true)"
+            onblur="handleTyping(false)"
+          />
+          <button onclick="sendMessage()">📤 Envoyer</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let socket;
+      let token;
+      let currentConversationId;
+
+      // Login et obtenir le token
+      async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          const response = await fetch('http://localhost:3000/auth/sign-in', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await response.json();
+
+          if (data.accessToken) {
+            token = data.accessToken;
+            addMessage('Système', '✅ Connecté avec succès !', 'system');
+            connectWebSocket();
+
+            // Afficher la section chat
+            document.querySelector('.auth-section').style.display = 'none';
+            document.getElementById('chatSection').style.display = 'block';
+          } else {
+            alert('Erreur de connexion');
+          }
+        } catch (error) {
+          console.error('Erreur:', error);
+          alert('Erreur de connexion au serveur');
+        }
+      }
+
+      // Connexion WebSocket
+      function connectWebSocket() {
+        socket = io('ws://localhost:3000/chat', {
+          query: { token },
+        });
+
+        socket.on('connect', () => {
+          console.log('✅ WebSocket connecté');
+          document.getElementById('status').textContent = 'Connecté';
+          document.getElementById('status').className = 'status connected';
+          addMessage('Système', '🔌 Connecté au serveur WebSocket', 'system');
+        });
+
+        socket.on('disconnect', () => {
+          console.log('❌ WebSocket déconnecté');
+          document.getElementById('status').textContent = 'Déconnecté';
+          document.getElementById('status').className = 'status disconnected';
+          addMessage('Système', '🔌 Déconnecté du serveur', 'system');
+        });
+
+        socket.on('message:new', (data) => {
+          addMessage(
+            'User ' + data.message.senderId,
+            data.message.content,
+            'user',
+          );
+        });
+
+        socket.on('user:typing', (data) => {
+          const indicator = document.getElementById('typingIndicator');
+          if (data.isTyping) {
+            indicator.style.display = 'block';
+            indicator.textContent = `✍️ User ${data.userId} est en train d'écrire...`;
+          } else {
+            indicator.style.display = 'none';
+          }
+        });
+
+        socket.on('user:online', (data) => {
+          addMessage(
+            'Système',
+            `🟢 User ${data.userId} est en ligne`,
+            'system',
+          );
+        });
+
+        socket.on('user:offline', (data) => {
+          addMessage(
+            'Système',
+            `⚫ User ${data.userId} est hors ligne`,
+            'system',
+          );
+        });
+
+        socket.on('message:read:ack', (data) => {
+          addMessage('Système', `✅ Message ${data.messageId} lu`, 'system');
+        });
+      }
+
+      // Rejoindre une conversation
+      function joinConversation() {
+        currentConversationId = parseInt(
+          document.getElementById('conversationId').value,
+        );
+
+        socket.emit(
+          'conversation:join',
+          { conversationId: currentConversationId },
+          (response) => {
+            if (response.success) {
+              addMessage('Système', `📥 ${response.message}`, 'system');
+            } else {
+              addMessage('Système', `❌ Erreur: ${response.error}`, 'system');
+            }
+          },
+        );
+      }
+
+      // Envoyer un message
+      function sendMessage() {
+        const content = document.getElementById('message').value.trim();
+
+        if (!content || !currentConversationId) {
+          alert('Veuillez rejoindre une conversation et écrire un message');
+          return;
+        }
+
+        socket.emit(
+          'message:send',
+          {
+            conversationId: currentConversationId,
+            content: content,
+          },
+          (response) => {
+            if (response.success) {
+              document.getElementById('message').value = '';
+              // Le message apparaîtra via l'événement message:new
+            } else {
+              addMessage('Système', `❌ Erreur: ${response.error}`, 'system');
+            }
+          },
+        );
+      }
+
+      // Indicateur typing
+      let typingTimeout;
+      function handleTyping(isTyping) {
+        if (!currentConversationId) return;
+
+        clearTimeout(typingTimeout);
+
+        socket.emit('message:typing', {
+          conversationId: currentConversationId,
+          isTyping: isTyping,
+        });
+
+        if (isTyping) {
+          typingTimeout = setTimeout(() => {
+            socket.emit('message:typing', {
+              conversationId: currentConversationId,
+              isTyping: false,
+            });
+          }, 3000);
+        }
+      }
+
+      // Ajouter un message dans l'UI
+      function addMessage(sender, content, type = 'user') {
+        const messagesDiv = document.getElementById('messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+
+        const time = new Date().toLocaleTimeString('fr-FR');
+
+        messageDiv.innerHTML = `
+        <div class="message-sender">${sender}</div>
+        <div class="message-content">${content}</div>
+        <div class="message-time">${time}</div>
+      `;
+
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
